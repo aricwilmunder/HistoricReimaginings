@@ -256,3 +256,35 @@ footer {
     width: 180px;
   }
 }
+
+
+
+/* ===== Audio Narration Button ===== */
+
+.speak-button {
+    display: inline-block;
+    margin: 1rem 0 2rem;
+    padding: .75rem 1.2rem;
+
+    background: var(--brass);
+    color: white;
+
+    border: 1px solid var(--brass);
+    border-radius: 4px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+
+    cursor: pointer;
+}
+
+.speak-button:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
+.speak-button:active {
+    transform: translateY(1px);
+}

@@ -43,6 +43,10 @@
     <p class="eyebrow">Pownalborough Court House</p>
     <h1>The Kitchen Fireplace</h1>
 
+<button id="speakBtn" class="speak-button">
+    🔊 Listen to this page
+</button>
+
     <p class="intro">This large open hearth was the center of food preparation in the courthouse kitchen. Before the introduction of a modern stove, heat came directly from the fire, and cooks controlled the placement of pots with an iron crane mounted inside the fireplace.</p>
 
     <h2>How the crane worked</h2>
@@ -95,6 +99,94 @@ if (localStorage.getItem("CounterDevIgnore") !== "true") {
     console.log("Counter.dev disabled for this browser.");
 }
 </script>
+
+
+<script>
+const btn = document.getElementById("speakBtn");
+let currentSpeech = null;
+
+function selectBestVoice() {
+    const voices = speechSynthesis.getVoices();
+
+    const preferredNames = [
+        "Samantha",
+        "Ava",
+        "Allison",
+        "Susan",
+        "Karen",
+        "Daniel",
+        "Microsoft Jenny Online",
+        "Microsoft Aria Online",
+        "Google US English"
+    ];
+
+    for (const name of preferredNames) {
+        const match = voices.find(voice =>
+            voice.name.includes(name) &&
+            voice.lang.toLowerCase().startsWith("en")
+        );
+
+        if (match) return match;
+    }
+
+    return voices.find(voice =>
+        voice.lang.toLowerCase() === "en-us"
+    ) || voices.find(voice =>
+        voice.lang.toLowerCase().startsWith("en")
+    );
+}
+
+btn.addEventListener("click", function () {
+    if (!("speechSynthesis" in window)) {
+        alert("Speech is not supported by this browser.");
+        return;
+    }
+
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        btn.textContent = "🔊 Listen";
+        return;
+    }
+
+    let text = "";
+
+    document
+        .querySelectorAll("main h1, main h2, main p, main li")
+        .forEach(element => {
+            if (!element.closest("footer")) {
+                text += element.innerText + ". ";
+            }
+        });
+
+    currentSpeech = new SpeechSynthesisUtterance(text);
+    currentSpeech.lang = "en-US";
+    currentSpeech.rate = 0.88;
+    currentSpeech.pitch = 1;
+    currentSpeech.volume = 1;
+
+    const voice = selectBestVoice();
+    if (voice) currentSpeech.voice = voice;
+
+    currentSpeech.onstart = function () {
+        btn.textContent = "■ Stop";
+    };
+
+    currentSpeech.onend = function () {
+        btn.textContent = "🔊 Listen";
+        currentSpeech = null;
+    };
+
+    currentSpeech.onerror = function () {
+        btn.textContent = "🔊 Listen";
+        currentSpeech = null;
+    };
+
+    speechSynthesis.speak(currentSpeech);
+});
+
+speechSynthesis.addEventListener("voiceschanged", selectBestVoice);
+</script>
+
 
 
 
